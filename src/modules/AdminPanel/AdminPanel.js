@@ -24,14 +24,8 @@ export default function AdminPanel({ employees = [] }) {
 
       setDeptEmpCount(deptEmpsCount);
     }, [employees.length]);
-  
-    const employeeData = [
-      { name: 'Company A', IT: 65, HR: 28, Finance: 45 },
-      { name: 'Company B', IT: 59, HR: 48, Finance: 30 },
-      { name: 'Company C', IT: 80, HR: 40, Finance: 50 },
-      { name: 'Company D', IT: 81, HR: 19, Finance: 60 },
-      { name: 'Company E', IT: 56, HR: 86, Finance: 70 },
-    ]
+
+    console.log(trafficPrediction);
   
     return (
       <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
@@ -71,17 +65,17 @@ export default function AdminPanel({ employees = [] }) {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Date</TableHead>
-                        {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'name').map(item => (
-                          <TableHead key={item}>{item}</TableHead>
+                        <TableHead>{"Date"}</TableHead>
+                        {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'date').map(item => (
+                          <TableHead key={item}>{startCase(item)}</TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {trafficPrediction.morning.map((pred) => (
-                        <TableRow key={pred.name}>
-                          <TableCell>{pred.name}</TableCell>
-                          {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'name').map(item => (
+                        <TableRow key={pred.date}>
+                          <TableCell>{pred.date}</TableCell>
+                          {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'date').map(item => (
                             <TableCell key={item}>{pred[item]}</TableCell>
                           ))}
                         </TableRow>
@@ -107,17 +101,17 @@ export default function AdminPanel({ employees = [] }) {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Date</TableHead>
-                        {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'name').map(item => (
-                          <TableHead key={item}>{item}</TableHead>
+                        <TableHead>{"Date"}</TableHead>
+                        {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'date').map(item => (
+                          <TableHead key={item}>{startCase(item)}</TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {trafficPrediction.evening.map((pred) => (
-                        <TableRow key={pred.name}>
-                          <TableCell>{pred.name}</TableCell>
-                          {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'name').map(item => (
+                        <TableRow key={pred.date}>
+                          <TableCell>{pred.date}</TableCell>
+                          {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'date').map(item => (
                             <TableCell key={item}>{pred[item]}</TableCell>
                           ))}
                         </TableRow>

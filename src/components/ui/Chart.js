@@ -36,9 +36,6 @@ export const BarChart = ({ data, xAxisKey = "name", bars = [] }) =>  {
         {bars && bars.map(bar => (
           <Bar key={bar} dataKey={bar} fill={colorPicker.getNextColor()} />
         ))}
-        {/* <Bar dataKey="IT" fill="#8884d8" />
-        <Bar dataKey="HR" fill="#82ca9d" />
-        <Bar dataKey="Finance" fill="#ffc658" /> */}
       </RechartsBarChart>
     </ResponsiveContainer>
   );
