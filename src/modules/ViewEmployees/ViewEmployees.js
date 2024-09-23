@@ -6,8 +6,8 @@ const ViewEmployees = ({ employees = [] }) => {
   const [assignments, setAssignments] = useState({});
 
   function assignSlots(employees, slots, period) {
-    const shuttleUsers = employees.filter(e => e.transport === 'shuttle');
-    const personalUsers = employees.filter(e => e.transport === 'personal');
+    const shuttleUsers = employees.filter(e => e.transport === 'Shuttle');
+    const personalUsers = employees.filter(e => e.transport === 'Personal');
     
     const actualShuttles = companies.length; // One shuttle per company
     const totalVehicles = personalUsers.length + (actualShuttles * shuttleEquivalentVehicles);

@@ -83,7 +83,7 @@ export default function AdminPanel({ employees = [] }) {
                     ))}
                     {/* id: `${company}_${i}`,
 						company: company,
-						transport: isShuttleUser ? 'shuttle' : 'personal',
+						transport: isShuttleUser ? 'Shuttle' : 'Personal',
 						userId: uniqueId("UID-"),
 						pwd: uniqueId(),
 						isActive: true,

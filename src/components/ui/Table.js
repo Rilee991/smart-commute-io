@@ -10,7 +10,7 @@ export const Table = React.forwardRef(({ className, ...props }, ref) => (
 Table.displayName = "Table"
 
 export const TableHeader = React.forwardRef(({ className, ...props }, ref) => (
-  <thead ref={ref} className={`[&_tr]:border-b ${className}`} {...props} />
+  <thead ref={ref} className={`[&_tr]:border-b bg-gray-200 ${className}`} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 

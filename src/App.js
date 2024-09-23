@@ -17,7 +17,7 @@ function App() {
 					employees.push({
 						id: `${company}_${i}`, //keep
 						company: company,
-						transport: isShuttleUser ? 'shuttle' : 'personal', //keep
+						transport: isShuttleUser ? 'Shuttle' : 'Personal', //keep
 						userId: uniqueId("UID-"), //keep
 						pwd: uniqueId(),
 						isActive: true,
