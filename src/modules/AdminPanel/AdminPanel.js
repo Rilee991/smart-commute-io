@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/Cards"
 import { Button } from "../../components/ui/Button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/Tabs"
@@ -7,22 +7,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../components/ui/Dialog"
 import { Progress } from "../../components/ui/Progress"
 import { ArrowRightIcon, BarChartIcon, CalendarIcon, AlertTriangleIcon, TableIcon, ChartLineIcon, ChartBarIcon } from 'lucide-react'
+import { trafficPrediction } from '../../components/data/data'
+import { groupByDepartmentAndCompany } from '../../components/data/utils'
+import { startCase } from 'lodash'
 
-export default function AdminPanel() {
-    const [activeTab, setActiveTab] = useState('traffic')
-    const [showScheduleModal, setShowScheduleModal] = useState(false)
-    const [showTrafficChart, setShowTrafficChart] = useState(true)
-    const [showEmployeeChart, setShowEmployeeChart] = useState(true)
-  
-    const trafficData = [
-      { name: 'Mon', 'Morning (7-11 AM)': 65, 'Evening (6-10 PM)': 28 },
-      { name: 'Tue', 'Morning (7-11 AM)': 59, 'Evening (6-10 PM)': 48 },
-      { name: 'Wed', 'Morning (7-11 AM)': 80, 'Evening (6-10 PM)': 40 },
-      { name: 'Thu', 'Morning (7-11 AM)': 81, 'Evening (6-10 PM)': 19 },
-      { name: 'Fri', 'Morning (7-11 AM)': 56, 'Evening (6-10 PM)': 86 },
-      { name: 'Sat', 'Morning (7-11 AM)': 55, 'Evening (6-10 PM)': 27 },
-      { name: 'Sun', 'Morning (7-11 AM)': 40, 'Evening (6-10 PM)': 90 },
-    ]
+export default function AdminPanel({ employees = [] }) {
+    const [activeTab, setActiveTab] = useState('traffic');
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [showTrafficChart, setShowTrafficChart] = useState(true);
+    const [showEveningTrafficChart, setShowEveningTrafficChart] = useState(true);
+    const [showEmployeeChart, setShowEmployeeChart] = useState(true);
+    const [deptEmpCount, setDeptEmpCount] = useState([]);
+
+    useEffect(() => {
+      const deptEmpsCount = groupByDepartmentAndCompany(employees);
+
+      setDeptEmpCount(deptEmpsCount);
+    }, [employees.length]);
   
     const employeeData = [
       { name: 'Company A', IT: 65, HR: 28, Finance: 45 },
@@ -57,30 +58,68 @@ export default function AdminPanel() {
           <TabsContent value="traffic">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Traffic Data for Next 7 Days</CardTitle>
-                <Button onClick={() => setShowTrafficChart(!showTrafficChart)}>
-                  {showTrafficChart ? <TableIcon className="mr-2" /> : <ChartLineIcon className="mr-2" /> }
-                  {showTrafficChart ? 'Show Table' : 'Show Chart'}
-                </Button>
+                  <CardTitle>Morning Traffic for Next 7 Days</CardTitle>
+                  <Button onClick={() => setShowTrafficChart(!showTrafficChart)}>
+                    {showTrafficChart ? <TableIcon className="mr-2" /> : <ChartLineIcon className="mr-2" /> }
+                    {showTrafficChart ? 'Show Table View' : 'Show Chart View'}
+                  </Button>
               </CardHeader>
               <CardContent>
                 {showTrafficChart ? (
-                  <LineChart data={trafficData} />
+                  <LineChart data={trafficPrediction.morning} xAxisKey="date" lines={Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'name')} />
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Day</TableHead>
-                        <TableHead>Morning (7-11 AM)</TableHead>
-                        <TableHead>Evening (6-10 PM)</TableHead>
+                        <TableHead>Date</TableHead>
+                        {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'name').map(item => (
+                          <TableHead key={item}>{item}</TableHead>
+                        ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {trafficData.map((day) => (
-                        <TableRow key={day.name}>
-                          <TableCell>{day.name}</TableCell>
-                          <TableCell>{day['Morning (7-11 AM)']}</TableCell>
-                          <TableCell>{day['Evening (6-10 PM)']}</TableCell>
+                      {trafficPrediction.morning.map((pred) => (
+                        <TableRow key={pred.name}>
+                          <TableCell>{pred.name}</TableCell>
+                          {Object.keys(trafficPrediction.morning[0]).filter(item => item !== 'name').map(item => (
+                            <TableCell key={item}>{pred[item]}</TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Evening Traffic for Next 7 Days</CardTitle>
+                <Button onClick={() => setShowEveningTrafficChart(!showEveningTrafficChart)}>
+                  {showEveningTrafficChart ? <TableIcon className="mr-2" /> : <ChartLineIcon className="mr-2" /> }
+                  {showEveningTrafficChart ? 'Show Table View' : 'Show Chart View'}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {showEveningTrafficChart ? (
+                  <LineChart data={trafficPrediction.evening} xAxisKey="date" lines={Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'name')} />
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'name').map(item => (
+                          <TableHead key={item}>{item}</TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {trafficPrediction.evening.map((pred) => (
+                        <TableRow key={pred.name}>
+                          <TableCell>{pred.name}</TableCell>
+                          {Object.keys(trafficPrediction.evening[0]).filter(item => item !== 'name').map(item => (
+                            <TableCell key={item}>{pred[item]}</TableCell>
+                          ))}
                         </TableRow>
                       ))}
                     </TableBody>
@@ -101,24 +140,22 @@ export default function AdminPanel() {
               </CardHeader>
               <CardContent>
                 {showEmployeeChart ? (
-                  <BarChart data={employeeData} />
+                  <BarChart data={deptEmpCount} bars={Object.keys(deptEmpCount[0] || {}).filter(item => item !== 'department')} xAxisKey="department" />
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Company</TableHead>
-                        <TableHead>IT</TableHead>
-                        <TableHead>HR</TableHead>
-                        <TableHead>Finance</TableHead>
+                        {Object.keys(deptEmpCount[0]).map(row => (
+                            <TableHead key={row}>{startCase(row)}</TableHead>
+                        ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {employeeData.map((company) => (
-                        <TableRow key={company.name}>
-                          <TableCell>{company.name}</TableCell>
-                          <TableCell>{company.IT}</TableCell>
-                          <TableCell>{company.HR}</TableCell>
-                          <TableCell>{company.Finance}</TableCell>
+                      {deptEmpCount && deptEmpCount.map((item) => (
+                        <TableRow key={item.department}>
+                          {Object.keys(deptEmpCount[0]).map(row => (
+                            <TableCell>{item[row]}</TableCell>
+                          ))}
                         </TableRow>
                       ))}
                     </TableBody>

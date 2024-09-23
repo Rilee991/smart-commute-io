@@ -16,8 +16,8 @@ const ViewEmployees = ({ employees = [] }) => {
     const assignments = Object.fromEntries(slots.map(slot => [slot, []]));
     
     if (period === 'morning') {
-      const hotSlots = ['7-8', '10-11'];
-      const regularSlots = ['8-9', '9-10'];
+      const hotSlots = ['7-8 AM', '10-11 AM'];
+      const regularSlots = ['8-9 AM', '9-10 AM'];
       const hotSlotPercentage = 0.4;
       
       let remainingShuttles = actualShuttles;

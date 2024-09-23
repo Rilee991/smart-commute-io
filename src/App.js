@@ -62,7 +62,7 @@ function App() {
 		// 	<br/><br/>
 		// </div>
 		<div>
-			<AdminPanel />
+			<AdminPanel employees={employees} />
 		</div>
   	);
 }
