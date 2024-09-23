@@ -67,29 +67,31 @@ export default function EmployeeTable({ employees = [] }) {
                     </SelectContent>
                 </Select>
             </CardHeader>
-            <CardContent className="max-h-[400px] overflow-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>{"Emp ID"}</TableHead>
-                            <TableHead>{"Name"}</TableHead>
-                            <TableHead>{"Company"}</TableHead>
-                            <TableHead>{"Department"}</TableHead>
-                            <TableHead>{"Transport"}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {currentEmployees && currentEmployees.map((item, idx) => (
-                            <TableRow key={item.id}>
-                                <TableCell>{item.id}</TableCell>
-                                <TableCell>{item.name}</TableCell>
-                                <TableCell>{item.company}</TableCell>
-                                <TableCell>{item.department}</TableCell>
-                                <TableCell>{item.transport}</TableCell>
+            <CardContent>
+                <div className="max-h-[400px] overflow-auto">
+                    <Table>
+                        <TableHeader className="sticky top-0">
+                            <TableRow>
+                                <TableHead>{"Emp ID"}</TableHead>
+                                <TableHead>{"Name"}</TableHead>
+                                <TableHead>{"Company"}</TableHead>
+                                <TableHead>{"Department"}</TableHead>
+                                <TableHead>{"Transport"}</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {currentEmployees && currentEmployees.map((item, idx) => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.company}</TableCell>
+                                    <TableCell>{item.department}</TableCell>
+                                    <TableCell>{item.transport}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
                 <div className="flex items-center justify-between space-x-2 py-4">
                     <button
                         className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
