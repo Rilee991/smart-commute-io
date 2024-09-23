@@ -1,10 +1,8 @@
 import { ResponsiveLine } from '@nivo/line';
-import { get, startCase, upperCase } from 'lodash';
 import React from 'react';
 import { trafficData } from '../../data';
 
 const CustomTooltip = ({ point }) => {
-    console.log(point);
     const date = point.data.x;
 
     // Find all data points for the hovered date
