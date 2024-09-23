@@ -1,21 +1,24 @@
 import React from 'react'
-import { LineChart as RechartsLineChart, BarChart as RechartsBarChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { LineChart as RechartsLineChart, BarChart as RechartsBarChart, Label, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from 'recharts'
 import ColorPicker from '../data/ColorPicker';
 import { darkColors } from '../data/data';
 
-export const LineChart = ({ data, lines = [], xAxisKey = "" }) => {
+export const LineChart = ({ data, lines = [], xAxisKey = "", xAxisLabel = "", yAxisLabel = "" }) => {
   const colorPicker = new ColorPicker(darkColors);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
       <RechartsLineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey={xAxisKey} />
-        <YAxis />
+        <XAxis dataKey={xAxisKey}>
+          <Label value={xAxisLabel} offset={-10} position="bottom" />
+        </XAxis>
+        <YAxis label={{ value: yAxisLabel, angle: -90, position: 'insideLeft' }}  />
         <Tooltip />
-        <Legend />
+        <Legend verticalAlign="top" />
         {lines && lines.map(line => (
-          <Line key={line} type="monotone" dataKey={line} stroke={colorPicker.getNextColor()} strokeWidth="3" />
+          <Line key={line} type="monotone" dataKey={line} stroke={colorPicker.getNextColor()} strokeWidth="3">
+          </Line>
         ))}
       </RechartsLineChart>
     </ResponsiveContainer>
