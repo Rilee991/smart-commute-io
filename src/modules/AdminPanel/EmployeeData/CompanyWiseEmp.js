@@ -72,6 +72,7 @@ export default function EmployeeTable({ employees = [] }) {
                         <TableHeader className="sticky top-0">
                             <TableRow>
                                 <TableHead>{"Emp ID"}</TableHead>
+                                <TableHead>{"User ID"}</TableHead>
                                 <TableHead>{"Name"}</TableHead>
                                 <TableHead>{"Company"}</TableHead>
                                 <TableHead>{"Department"}</TableHead>
@@ -82,6 +83,7 @@ export default function EmployeeTable({ employees = [] }) {
                             {currentEmployees && currentEmployees.map((item, idx) => (
                                 <TableRow key={item.id}>
                                     <TableCell>{item.id}</TableCell>
+                                    <TableCell>{item.userId}</TableCell>
                                     <TableCell>{item.name}</TableCell>
                                     <TableCell>{item.company}</TableCell>
                                     <TableCell>{item.department}</TableCell>

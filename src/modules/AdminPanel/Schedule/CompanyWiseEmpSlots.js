@@ -13,13 +13,13 @@ export default function EmployeeTableSlots({ employees = [] }) {
 
   const companies = useMemo(() => {
     return ["All", ...new Set(employees.map(emp => emp.company))];
-  }, []);
+  }, [employees.length]);
 
   const filteredEmployees = useMemo(() => {
     return selectedCompany === "All"
       ? employees
       : employees.filter(emp => emp.company === selectedCompany);
-  }, [selectedCompany]);
+  }, [selectedCompany, companies]);
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
@@ -55,7 +55,7 @@ export default function EmployeeTableSlots({ employees = [] }) {
                     <Table>
                         <TableHeader className="sticky top-0">
                             <TableRow>
-                                {Object.keys(employees[0]).map(col => <TableHead>{startCase(col)}</TableHead>)}
+                                {Object.keys(employees[0] || {}).map(col => <TableHead key={col}>{startCase(col)}</TableHead>)}
                                 {/* <TableHead>{"Emp ID"}</TableHead>
                                 <TableHead>{"Name"}</TableHead>
                                 <TableHead>{"Company"}</TableHead>
@@ -68,7 +68,7 @@ export default function EmployeeTableSlots({ employees = [] }) {
                             {currentEmployees && currentEmployees.map((item, idx) => (
                                 <TableRow key={item.empId}>
                                     {Object.keys(item).map(row => (
-                                        <TableCell>{item[row]}</TableCell>
+                                        <TableCell key={row}>{item[row]}</TableCell>
                                     ))}
                                 </TableRow>
                             ))}
