@@ -12,14 +12,10 @@ import { groupByDepartmentAndCompany } from '../../components/data/utils'
 import { startCase } from 'lodash'
 import TrafficData from './TrafficData/TrafficData'
 import EmployeeData from './EmployeeData/EmployeeData'
+import Schedule from './Schedule/Schedule'
 
 export default function AdminPanel({ employees = [] }) {
     const [activeTab, setActiveTab] = useState('traffic');
-    const [showScheduleModal, setShowScheduleModal] = useState(false);
-    const [showTrafficChart, setShowTrafficChart] = useState(true);
-    const [showEveningTrafficChart, setShowEveningTrafficChart] = useState(true);
-    const [showEmployeeChart, setShowEmployeeChart] = useState(true);
-
   
     return (
       <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
@@ -54,66 +50,7 @@ export default function AdminPanel({ employees = [] }) {
           </TabsContent>
   
           <TabsContent value="schedule">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Employee Schedules</CardTitle>
-                <Button onClick={() => setShowScheduleModal(true)}>Create Schedule</Button>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Company</TableHead>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Time Slot</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {employees && employees.map(emp => (
-                      <TableRow key={emp.id}>
-                        <TableCell>{emp.id}</TableCell>
-                        <TableCell>{emp.company}</TableCell>
-                        <TableCell>{emp.userId}</TableCell>
-                        <TableCell>{emp.name}</TableCell>
-                        <TableCell>{emp.departments}</TableCell>
-                        <TableCell>{emp.morningPreference}</TableCell>
-                        <TableCell>{emp.eveningPreference}</TableCell>
-                      </TableRow>
-                    ))}
-                    {/* id: `${company}_${i}`,
-						company: company,
-						transport: isShuttleUser ? 'Shuttle' : 'Personal',
-						userId: uniqueId("UID-"),
-						pwd: uniqueId(),
-						isActive: true,
-						name: generateRandomName(),
-						isShuttle: isShuttleUser,
-						department: departments[Math.floor(Math.random() * 4)],
-						morningPreference: isShuttleUser ? morningSlots[Math.floor(Math.random() * morningSlots.length)] : null,
-						eveningPreference: isShuttleUser ? eveningSlots[Math.floor(Math.random() * eveningSlots.length)] : null */}
-                    {/* <TableRow>
-                      <TableCell>Company A</TableCell>
-                      <TableCell>John Doe</TableCell>
-                      <TableCell>IT</TableCell>
-                      <TableCell>9:00 AM - 10:00 AM</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Company B</TableCell>
-                      <TableCell>Jane Smith</TableCell>
-                      <TableCell>HR</TableCell>
-                      <TableCell>10:00 AM - 11:00 AM</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Company C</TableCell>
-                      <TableCell>Bob Johnson</TableCell>
-                      <TableCell>Finance</TableCell>
-                      <TableCell>8:00 AM - 9:00 AM</TableCell>
-                    </TableRow> */}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <Schedule employees={employees} />
           </TabsContent>
   
           <TabsContent value="penalties">
@@ -161,26 +98,6 @@ export default function AdminPanel({ employees = [] }) {
             </div>
           </TabsContent>
         </Tabs>
-  
-        <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Schedule</DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <p className="text-center text-gray-600">Scheduling algorithm is running...</p>
-              <div className="mt-4 flex justify-center">
-                <svg className="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={() => setShowScheduleModal(false)}>Close</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     )
 }

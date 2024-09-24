@@ -1,4 +1,4 @@
-import { firstNames, lastNames } from "./data";
+import { companies, firstNames, lastNames, shuttleCapacity, shuttleEquivalentVehicles } from "./data";
 
 export const generateTrafficData = () => {
     const generateDate = (daysFromNow) => {
@@ -122,79 +122,112 @@ export function groupByTransport(employees) {
     return result;
 }
 
-// export function assignSlots(employees, slots, period) {
-//     const shuttleUsers = employees.filter(e => e.transport === 'Shuttle');
-//     const personalUsers = employees.filter(e => e.transport === 'Personal');
+export function assignSlotsWithoutPreference(employees, slots, period) {
+  const shuttleUsers = employees.filter(e => e.transport === 'Shuttle');
+  const personalUsers = employees.filter(e => e.transport === 'Personal');
+  
+  const actualShuttles = companies.length; // One shuttle per company
+  const totalVehicles = personalUsers.length + (actualShuttles * shuttleEquivalentVehicles);
+  const avgVehiclesPerSlot = totalVehicles / slots.length;
+  
+  const assignments = Object.fromEntries(slots.map(slot => [slot, []]));
+  
+  if (period === 'morning') {
+    const hotSlots = ['7-8 AM', '10-11 AM'];
+    const regularSlots = ['8-9 AM', '9-10 AM'];
+    const hotSlotPercentage = 0.4;
     
-//     const actualShuttles = companies.length; // One shuttle per company
-//     const totalVehicles = personalUsers.length + (actualShuttles * shuttleEquivalentVehicles);
-//     const avgVehiclesPerSlot = totalVehicles / slots.length;
+    let remainingShuttles = actualShuttles;
+    for (let slot of hotSlots) {
+      const slotShuttles = Math.ceil(actualShuttles * hotSlotPercentage);
+      const slotCapacity = slotShuttles * shuttleCapacity;
+      assignments[slot] = shuttleUsers.splice(0, slotCapacity);
+      remainingShuttles -= slotShuttles;
+    }
     
-//     const assignments = Object.fromEntries(slots.map(slot => [slot, []]));
+    for (let slot of regularSlots) {
+      const slotShuttles = Math.floor(remainingShuttles / regularSlots.length);
+      const slotCapacity = slotShuttles * shuttleCapacity;
+      assignments[slot].push(...shuttleUsers.splice(0, slotCapacity));
+      remainingShuttles -= slotShuttles;
+    }
     
-//     if (period === 'morning') {
-//       const hotSlots = ['7-8 AM', '10-11 AM'];
-//       const regularSlots = ['8-9 AM', '9-10 AM'];
-//       const hotSlotPercentage = 0.4;
-      
-//       let remainingShuttles = actualShuttles;
-//       for (let slot of hotSlots) {
-//         const slotShuttles = Math.ceil(actualShuttles * hotSlotPercentage);
-//         const slotCapacity = slotShuttles * shuttleCapacity;
-//         assignments[slot] = shuttleUsers.splice(0, slotCapacity);
-//         remainingShuttles -= slotShuttles;
-//       }
-      
-//       for (let slot of regularSlots) {
-//         const slotShuttles = Math.floor(remainingShuttles / regularSlots.length);
-//         const slotCapacity = slotShuttles * shuttleCapacity;
-//         assignments[slot].push(...shuttleUsers.splice(0, slotCapacity));
-//         remainingShuttles -= slotShuttles;
-//       }
-      
-//       // Distribute any remaining shuttle users
-//       let slotIndex = 0;
-//       while (shuttleUsers.length > 0) {
-//         const currentSlot = slots[slotIndex];
-//         assignments[currentSlot].push(shuttleUsers.pop());
-//         slotIndex = (slotIndex + 1) % slots.length;
-//       }
-//     } else {
-//       // Evenly distribute shuttle users for evening
-//       const shuttlesPerSlot = Math.floor(actualShuttles / slots.length);
-//       const extraShuttles = actualShuttles % slots.length;
-      
-//       slots.forEach((slot, index) => {
-//         let slotShuttles = shuttlesPerSlot + (index < extraShuttles ? 1 : 0);
-//         const slotCapacity = slotShuttles * shuttleCapacity;
-//         assignments[slot].push(...shuttleUsers.splice(0, slotCapacity));
-//       });
-      
-//       // Distribute any remaining shuttle users
-//       let slotIndex = 0;
-//       while (shuttleUsers.length > 0) {
-//         const currentSlot = slots[slotIndex];
-//         assignments[currentSlot].push(shuttleUsers.pop());
-//         slotIndex = (slotIndex + 1) % slots.length;
-//       }
-//     }
+    // Distribute any remaining shuttle users
+    let slotIndex = 0;
+    while (shuttleUsers.length > 0) {
+      const currentSlot = slots[slotIndex];
+      assignments[currentSlot].push(shuttleUsers.pop());
+      slotIndex = (slotIndex + 1) % slots.length;
+    }
+  } else {
+    // Evenly distribute shuttle users for evening
+    const shuttlesPerSlot = Math.floor(actualShuttles / slots.length);
+    const extraShuttles = actualShuttles % slots.length;
     
-//     // Assign personal vehicle users
-//     for (let slot of slots) {
-//       const currentVehicles = assignments[slot].filter(e => e.transport === 'personal').length + 
-//         (Math.ceil(assignments[slot].filter(e => e.transport === 'Shuttle').length / shuttleCapacity) * shuttleEquivalentVehicles);
-      
-//       const remainingCapacity = Math.max(0, Math.floor(avgVehiclesPerSlot - currentVehicles));
-//       assignments[slot].push(...personalUsers.splice(0, remainingCapacity));
-//     }
+    slots.forEach((slot, index) => {
+      let slotShuttles = shuttlesPerSlot + (index < extraShuttles ? 1 : 0);
+      const slotCapacity = slotShuttles * shuttleCapacity;
+      assignments[slot].push(...shuttleUsers.splice(0, slotCapacity));
+    });
     
-//     // Distribute any remaining employees
-//     for (let user of personalUsers) {
-//       const minSlot = slots.reduce((a, b) => 
-//         assignments[a].length <= assignments[b].length ? a : b
-//       );
-//       assignments[minSlot].push(user);
-//     }
+    // Distribute any remaining shuttle users
+    let slotIndex = 0;
+    while (shuttleUsers.length > 0) {
+      const currentSlot = slots[slotIndex];
+      assignments[currentSlot].push(shuttleUsers.pop());
+      slotIndex = (slotIndex + 1) % slots.length;
+    }
+  }
+  
+  // Assign personal vehicle users
+  for (let slot of slots) {
+    const currentVehicles = assignments[slot].filter(e => e.transport === 'Personal').length + 
+      (Math.ceil(assignments[slot].filter(e => e.transport === 'Shuttle').length / shuttleCapacity) * shuttleEquivalentVehicles);
     
-//     setAssignments(assignments);
-// }
+    const remainingCapacity = Math.max(0, Math.floor(avgVehiclesPerSlot - currentVehicles));
+    assignments[slot].push(...personalUsers.splice(0, remainingCapacity));
+  }
+  
+  // Distribute any remaining employees
+  for (let user of personalUsers) {
+    const minSlot = slots.reduce((a, b) => 
+      assignments[a].length <= assignments[b].length ? a : b
+    );
+    assignments[minSlot].push(user);
+  }
+  
+  return assignments;
+}
+
+export function createEmployeeTable(morningAssignments, eveningAssignments) {
+  const employeeTable = [];
+
+  const allEmployees = new Set();
+  
+  for (const period of ['morning', 'evening']) {
+    const assignments = period === 'morning' ? morningAssignments : eveningAssignments;
+    for (const [slot, employees] of Object.entries(assignments)) {
+      for (const employee of employees) {
+        if (!allEmployees.has(employee.id)) {
+          allEmployees.add(employee.id);
+          employeeTable.push({
+            empId: employee.id,
+            name: employee.name,
+            company: employee.company,
+            department: employee.department,
+            transport: employee.transport,
+            morningSlot: period === 'morning' ? slot : '',
+            eveningSlot: period === 'evening' ? slot : ''
+          });
+        } else {
+          const employeeRow = employeeTable.find(row => row.empId === employee.id);
+          if (employeeRow) {
+            employeeRow[`${period}Slot`] = slot;
+          }
+        }
+      }
+    }
+  }
+
+  return employeeTable;
+}

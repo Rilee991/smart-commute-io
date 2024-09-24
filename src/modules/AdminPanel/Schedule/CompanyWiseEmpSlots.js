@@ -5,23 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Cards';
 import { startCase } from 'lodash';
 
-// Mock data for employees
-const employeess = [
-  { company: "TechCorp", name: "John Doe", empid: "TC001" },
-  { company: "TechCorp", name: "Jane Smith", empid: "TC002" },
-  { company: "DataSoft", name: "Alice Johnson", empid: "DS001" },
-  { company: "DataSoft", name: "Bob Williams", empid: "DS002" },
-  { company: "WebSolutions", name: "Charlie Brown", empid: "WS001" },
-  { company: "WebSolutions", name: "Diana Miller", empid: "WS002" },
-  { company: "TechCorp", name: "Eva Davis", empid: "TC003" },
-  { company: "DataSoft", name: "Frank Wilson", empid: "DS003" },
-  { company: "WebSolutions", name: "Grace Taylor", empid: "WS003" },
-  { company: "TechCorp", name: "Henry Moore", empid: "TC004" },
-  { company: "DataSoft", name: "Ivy Clark", empid: "DS004" },
-  { company: "WebSolutions", name: "Jack Lewis", empid: "WS004" },
-];
-
-export default function EmployeeTable({ employees = [] }) {
+export default function EmployeeTableSlots({ employees = [] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState("All");
 
@@ -52,7 +36,7 @@ export default function EmployeeTable({ employees = [] }) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Company-wise Employee Info</CardTitle>
+                <CardTitle>Employee-wise Slot Info</CardTitle>
                 <Select value={selectedCompany}>
                     <SelectTrigger>
                         <SelectValue placeholder="Filter by Company" />
@@ -71,21 +55,21 @@ export default function EmployeeTable({ employees = [] }) {
                     <Table>
                         <TableHeader className="sticky top-0">
                             <TableRow>
-                                <TableHead>{"Emp ID"}</TableHead>
+                                {Object.keys(employees[0]).map(col => <TableHead>{startCase(col)}</TableHead>)}
+                                {/* <TableHead>{"Emp ID"}</TableHead>
                                 <TableHead>{"Name"}</TableHead>
                                 <TableHead>{"Company"}</TableHead>
                                 <TableHead>{"Department"}</TableHead>
                                 <TableHead>{"Transport"}</TableHead>
+                                <TableHead>{"Morn"}</TableHead> */}
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {currentEmployees && currentEmployees.map((item, idx) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>{item.id}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
-                                    <TableCell>{item.company}</TableCell>
-                                    <TableCell>{item.department}</TableCell>
-                                    <TableCell>{item.transport}</TableCell>
+                                <TableRow key={item.empId}>
+                                    {Object.keys(item).map(row => (
+                                        <TableCell>{item[row]}</TableCell>
+                                    ))}
                                 </TableRow>
                             ))}
                         </TableBody>

@@ -8,7 +8,9 @@ export const shuttleEquivalentVehicles = 5;
 export const shuttleCapacity = 40;
 export const trafficPrediction = generateTrafficData();
 const morningTrafficData = trafficPrediction.morning[0];
-export const morningSlots = Object.keys(morningTrafficData);
+const eveningTrafficData = trafficPrediction.evening[0];
+export const morningSlots = Object.keys(morningTrafficData).filter(item => item !== "date");
+export const eveningSlots = Object.keys(eveningTrafficData).filter(item => item !== "date");
 export const firstNames = [
     "John", "Jane", "Alex", "Emily", "Michael", "Sarah", "David", "Laura",
     "Chris", "Emma", "Daniel", "Olivia", "James", "Sophia", "Matthew", "Isabella",

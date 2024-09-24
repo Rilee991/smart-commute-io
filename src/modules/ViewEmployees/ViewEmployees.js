@@ -82,8 +82,6 @@ const ViewEmployees = ({ employees = [] }) => {
     setAssignments(assignments);
   }
 
-  console.log(assignments);
-
   return (
     <div style={{ padding: '20px' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
