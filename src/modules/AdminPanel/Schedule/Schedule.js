@@ -94,16 +94,20 @@ const Schedule = ({ employees = [] }) => {
     const [employeeTable, setEmployeeTable] = useState([]);
     const [preferenceType, setPreferenceType] = useState('no-preference');
 
-    const assumptions = [
-        "Companies are willing to implement flexible work hours.",
-        "Employees are able to adjust their schedules as recommended.",
-        "The system has access to real-time traffic data.",
-        "Did not consider how weather conditions or occasional programs will impact commute times.",
-        "Shuttles will be mostly use 7-8am and 10-11am slots.",
-        "Shuttle is not shared by all companies.",
-        "1 Shuttle takes space of 5 vehicles.",
-        "If employee preference is given and slot is not avaiable, then next nearest slot is allocated."
-    ];
+    const solutionAssumptions = [
+      <span>Companies are willing to <strong>adjust work hours</strong>, and employees can shift schedules as recommended.</span>,
+      <span>The system depends on <strong>real-time traffic data, </strong> <strong>but doesn’t</strong> account for <strong>weather or special events.</strong></span>,
+      <span><strong>No changes</strong> required to existing infrastructure.</span>,
+      <span>Employees have <strong>flexibility</strong> in slot choices, and companies enforce participation through <strong>policies</strong>.</span>,
+  ];
+
+    const schedulingAssumptions = [
+      <span>Shuttles primarily run in <strong>7-8 AM and 10-11 AM</strong> slots.</span>,
+      <span>Shuttles are <strong>not shared</strong> by all companies.</span>,
+      <span><strong>1 Shuttle = 5 vehicles</strong>.</span>,
+      <span>If a preferred <strong>slot isn't available</strong>, backlog employees will be <strong>assigned any remaining slots after all others are allocated</strong>.</span>,
+      <span>Shuttle distribution follows a <strong>40-10-10-40</strong> pattern.</span>
+  ];
 
     const onClickGenerate = (prefType) => {
         setPreferenceType(prefType);
@@ -119,11 +123,21 @@ const Schedule = ({ employees = [] }) => {
         <div>
             <Card>
                 <CardHeader>
-                    <CardTitle>System Assumptions</CardTitle>
+                    <CardTitle>Solution Assumptions</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <ul className="list-disc pl-5 space-y-2">
-                        {assumptions.map((assumption, index) => (
+                        {solutionAssumptions.map((assumption, index) => (
+                            <li key={index} className="text-gray-700">{assumption}</li>
+                        ))}
+                    </ul>
+                </CardContent>
+                <CardHeader>
+                    <CardTitle>Scheduling Assumptions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <ul className="list-disc pl-5 space-y-2">
+                        {schedulingAssumptions.map((assumption, index) => (
                             <li key={index} className="text-gray-700">{assumption}</li>
                         ))}
                     </ul>

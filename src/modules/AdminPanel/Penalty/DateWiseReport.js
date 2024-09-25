@@ -1,0 +1,88 @@
+import React, { useState, useMemo } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Dropdown';
+import { ChartLineIcon, ChevronLeftIcon, ChevronRightIcon, TableIcon } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/Table';
+import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Cards';
+import { startCase } from 'lodash';
+import { Button } from '../../../components/ui/Button';
+import { BarChart } from '../../../components/ui/Chart';
+
+const DateWiseReport = ({ dateWiseReport = [] }) => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showGraph, setShowGraph] = useState(true);
+
+    const itemsPerPage = 10;
+
+    const totalPages = Math.ceil(dateWiseReport.length / itemsPerPage);
+
+    const currentDateWiseReport = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return dateWiseReport.slice(startIndex, startIndex + itemsPerPage);
+    }, [currentPage, dateWiseReport]);
+
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Date-wise Employee report</CardTitle>
+                <Button onClick={() => setShowGraph(!showGraph)}>
+                    {showGraph ? <TableIcon className="mr-2" /> : <ChartLineIcon className="mr-2" /> }
+                    {showGraph ? 'Show Table View' : 'Show Chart View'}
+                </Button>
+            </CardHeader>
+            <CardContent>
+                {showGraph ? (
+                    <div>
+                        <BarChart xAxisLabel="Date" yAxisLabel="Employees" data={dateWiseReport} bars={Object.keys(dateWiseReport[0] || {}).filter(item => item !== 'date')} xAxisKey="date" />
+                    </div>
+                ) : (
+                    <React.Fragment>
+                        <div className="max-h-[400px] overflow-auto">
+                            <Table>
+                                <TableHeader className="sticky top-0">
+                                    <TableRow>
+                                        {/* {Object.keys(dateWiseReport[0] || {}).map(col => <TableHead key={col}>{startCase(col)}</TableHead>)} */}
+                                        <TableHead>{"Date"}</TableHead>
+                                        <TableHead>{"Missed Entries"}</TableHead>
+                                        <TableHead>{"Missed Exits"}</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {currentDateWiseReport && currentDateWiseReport.map((item, idx) => (
+                                        <TableRow key={idx}>
+                                            {Object.keys(item).map(row => (
+                                                <TableCell key={row}>{item[row]}</TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                        <div className="flex items-center justify-between space-x-2 py-4">
+                            <button
+                                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeftIcon className="h-5 w-5 mr-2" />
+                                Previous
+                            </button>
+                            <div className="text-sm text-gray-700">
+                                Page {currentPage} of {totalPages}
+                            </div>
+                            <button
+                                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                            >
+                                Next
+                                <ChevronRightIcon className="h-5 w-5 ml-2" />
+                            </button>
+                        </div>
+                    </React.Fragment>)
+                }
+            </CardContent>
+        </Card>
+    );
+}
+
+export default DateWiseReport;

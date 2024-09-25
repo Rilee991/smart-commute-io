@@ -18,7 +18,7 @@ export const Select = ({ children, value, onChange }) => {
   }, [ref]);
 
   return (
-    <div ref={ref} className="relative inline-block text-left">
+    <div ref={ref} className="relative inline-block text-left w-52">
       {React.Children.map(children, child =>
         React.cloneElement(child, { isOpen, setIsOpen, value, onChange })
       )}

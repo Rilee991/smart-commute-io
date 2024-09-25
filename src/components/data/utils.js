@@ -124,7 +124,7 @@ export function groupByTransport(employees) {
 
 export function assignSlotsWithoutPreference(employees, slots, period) {
   const shuttleUsers = employees.filter(e => e.transport === 'Shuttle');
-  const personalUsers = employees.filter(e => e.transport === 'Personal');
+  const personalUsers = employees.filter(e => e.transport === 'Individual');
   
   const actualShuttles = companies.length; // One shuttle per company
   const totalVehicles = personalUsers.length + (actualShuttles * shuttleEquivalentVehicles);
@@ -161,14 +161,24 @@ export function assignSlotsWithoutPreference(employees, slots, period) {
     }
   } else {
     // Evenly distribute shuttle users for evening
-    const shuttlesPerSlot = Math.floor(actualShuttles / slots.length);
-    const extraShuttles = actualShuttles % slots.length;
+    const hotSlots = ['6-7 PM', '9-10 PM'];
+    const regularSlots = ['7-8 PM', '8-9 PM'];
+    const hotSlotPercentage = 0.4;
     
-    slots.forEach((slot, index) => {
-      let slotShuttles = shuttlesPerSlot + (index < extraShuttles ? 1 : 0);
+    let remainingShuttles = actualShuttles;
+    for (let slot of hotSlots) {
+      const slotShuttles = Math.ceil(actualShuttles * hotSlotPercentage);
+      const slotCapacity = slotShuttles * shuttleCapacity;
+      assignments[slot] = shuttleUsers.splice(0, slotCapacity);
+      remainingShuttles -= slotShuttles;
+    }
+    
+    for (let slot of regularSlots) {
+      const slotShuttles = Math.floor(remainingShuttles / regularSlots.length);
       const slotCapacity = slotShuttles * shuttleCapacity;
       assignments[slot].push(...shuttleUsers.splice(0, slotCapacity));
-    });
+      remainingShuttles -= slotShuttles;
+    }
     
     // Distribute any remaining shuttle users
     let slotIndex = 0;
@@ -181,7 +191,7 @@ export function assignSlotsWithoutPreference(employees, slots, period) {
   
   // Assign personal vehicle users
   for (let slot of slots) {
-    const currentVehicles = assignments[slot].filter(e => e.transport === 'Personal').length + 
+    const currentVehicles = assignments[slot].filter(e => e.transport === 'Individual').length + 
       (Math.ceil(assignments[slot].filter(e => e.transport === 'Shuttle').length / shuttleCapacity) * shuttleEquivalentVehicles);
     
     const remainingCapacity = Math.max(0, Math.floor(avgVehiclesPerSlot - currentVehicles));
@@ -230,4 +240,115 @@ export function createEmployeeTable(morningAssignments, eveningAssignments) {
   }
 
   return employeeTable;
+}
+
+export function assignLateStatusToEmployees(employees) {
+  const totalEmployees = employees.length;
+  const last7Days = [];
+
+  // Generate the last 7 days starting from yesterday
+  for (let i = 1; i <= 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      last7Days.push(date.toISOString().split('T')[0]);
+  }
+
+  // For each day in the last 7 days, assign late status
+  const result = last7Days.map((date) => {
+      const maxLateEmployees = Math.ceil(totalEmployees * Math.random() * 0.05); // 10% of total employees
+      // Shuffle the employees array to randomly select late employees
+      const shuffledEmployees = [...employees].sort(() => Math.random() - 0.5);
+
+      // Select late employees for the morning and evening (max 10%)
+      const morningLateEmployees = shuffledEmployees.slice(0, maxLateEmployees);
+      const eveningLateEmployees = shuffledEmployees.slice(maxLateEmployees, maxLateEmployees * (Math.random()+0.4) * 2);
+
+      // Map over the employees and attach the late status
+      const employeesForDay = employees.map((employee) => {
+          return {
+              ...employee,
+              date,
+              isMorningLate: morningLateEmployees.includes(employee),
+              isEveningLate: eveningLateEmployees.includes(employee),
+          };
+      });
+
+      return { date, missedMornings: morningLateEmployees.length, missedEvenings: eveningLateEmployees.length, employees: employeesForDay };
+  });
+
+  return result;
+}
+
+export function getMissedSlotsSummary(employees) {
+  const summary = {};
+
+  employees.forEach(employee => {
+      const { date, company, isMorningLate, isEveningLate } = employee;
+
+      // Initialize an entry for the company-date combination if not already present
+      if (!summary[date]) {
+          summary[date] = {};
+      }
+
+      if (!summary[date][company]) {
+          summary[date][company] = { missedMornings: 0, missedEvenings: 0 };
+      }
+
+      // Increment missed mornings and evenings based on late status
+      if (isMorningLate) {
+          summary[date][company].missedMornings += 1;
+      }
+
+      if (isEveningLate) {
+          summary[date][company].missedEvenings += 1;
+      }
+  });
+
+  // Convert the summary object into an array of objects with the desired structure
+  const result = [];
+  for (const date in summary) {
+      for (const company in summary[date]) {
+          result.push({
+              date,
+              company,
+              missedMornings: summary[date][company].missedMornings,
+              missedEvenings: summary[date][company].missedEvenings,
+          });
+      }
+  }
+
+  return result;
+}
+
+export function transformMissedData(dataArray) {
+  // Create a map to store the result grouped by date
+  const resultMap = new Map();
+
+  dataArray.forEach(data => {
+      const { date, company, missedMornings, missedEvenings } = data;
+
+      // If the date already exists in the map, add/update the company data
+      if (resultMap.has(date)) {
+          const existingData = resultMap.get(date);
+          existingData[company] = (existingData[company] || 0) + missedMornings + missedEvenings;
+      } else {
+          // If the date doesn't exist, create a new entry
+          resultMap[date] = {};
+
+          for(const com of companies) {
+            resultMap[date] = { ...resultMap[date], [com]: 0 }
+          }
+          // companies.forEach(com => resultMap[date] = {
+          //   [com]: 0
+          // });
+
+          resultMap.set(date, {
+              date,
+              [company]: missedMornings + missedEvenings
+          });
+      }
+  });
+
+  // Convert the result map back into an array
+  return Array.from(resultMap.values());
 }

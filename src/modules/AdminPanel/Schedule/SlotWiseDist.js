@@ -20,7 +20,7 @@ const SlotWiseDist = ({ empWiseSlots = {}, type = 'Morning' }) => {
                     <TableRow>
                         <TableHead>Slot</TableHead>
                         <TableHead>Employee count</TableHead>
-                        <TableHead>Personal vehicles count</TableHead>
+                        <TableHead>Individual vehicles count</TableHead>
                         <TableHead>Shuttle Count</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -28,7 +28,7 @@ const SlotWiseDist = ({ empWiseSlots = {}, type = 'Morning' }) => {
                     <TableBody>
                         {Object.keys(empWiseSlots).map(slot => {
                             const totalSlotEmps = empWiseSlots[slot].length;
-                            const personalVehicles = empWiseSlots[slot].filter(item => item.transport === "Personal").length;
+                            const personalVehicles = empWiseSlots[slot].filter(item => item.transport === "Individual").length;
                             const shuttles = (totalSlotEmps - personalVehicles)/shuttleCapacity;
 
                             return (

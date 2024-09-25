@@ -1,9 +1,11 @@
 import { uniqueId } from 'lodash';
 import { useEffect, useState } from 'react';
 import './assets/tailwindcss/tailwind.css';
+import { destinations } from './components/data/data';
 import { companies, departments, employeesPerCompany, eveningSlots, generateRandomName, morningSlots, shuttlePercentage } from './constants';
 import AdminPanel from './modules/AdminPanel/AdminPanel';
-  
+
+
 function App() {
 	const [employees, setEmployees] = useState([]);
 
@@ -17,12 +19,13 @@ function App() {
 					employees.push({
 						id: `${company}_${i}`, //keep
 						company: company,
-						transport: isShuttleUser ? 'Shuttle' : 'Personal', //keep
+						transport: isShuttleUser ? 'Shuttle' : 'Individual', //keep
 						userId: uniqueId("UID-"), //keep
 						pwd: uniqueId(),
 						isActive: true,
 						name: generateRandomName(), //keep
 						isShuttle: isShuttleUser,
+						destination: destinations[Math.floor(Math.random() * 3)],
 						department: departments[Math.floor(Math.random() * 4)], //keep
 						morningPreference: isShuttleUser ? morningSlots[Math.floor(Math.random() * morningSlots.length)] : null,
 						eveningPreference: isShuttleUser ? eveningSlots[Math.floor(Math.random() * eveningSlots.length)] : null

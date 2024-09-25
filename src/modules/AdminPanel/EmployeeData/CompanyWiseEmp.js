@@ -4,38 +4,29 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../../components/ui/Table';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../components/ui/Cards';
 import { startCase } from 'lodash';
-
-// Mock data for employees
-const employeess = [
-  { company: "TechCorp", name: "John Doe", empid: "TC001" },
-  { company: "TechCorp", name: "Jane Smith", empid: "TC002" },
-  { company: "DataSoft", name: "Alice Johnson", empid: "DS001" },
-  { company: "DataSoft", name: "Bob Williams", empid: "DS002" },
-  { company: "WebSolutions", name: "Charlie Brown", empid: "WS001" },
-  { company: "WebSolutions", name: "Diana Miller", empid: "WS002" },
-  { company: "TechCorp", name: "Eva Davis", empid: "TC003" },
-  { company: "DataSoft", name: "Frank Wilson", empid: "DS003" },
-  { company: "WebSolutions", name: "Grace Taylor", empid: "WS003" },
-  { company: "TechCorp", name: "Henry Moore", empid: "TC004" },
-  { company: "DataSoft", name: "Ivy Clark", empid: "DS004" },
-  { company: "WebSolutions", name: "Jack Lewis", empid: "WS004" },
-];
+import { companies, destinations } from '../../../components/data/data';
 
 export default function EmployeeTable({ employees = [] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCompany, setSelectedCompany] = useState("All");
+  const [selectedDestination, setSelectedDestination] = useState("All");
 
   const itemsPerPage = 10;
 
-  const companies = useMemo(() => {
+  const dropdownCompanies = useMemo(() => {
     return ["All", ...new Set(employees.map(emp => emp.company))];
   }, []);
 
+  const dropdownDestinations = useMemo(() => {
+    return ["All", ...new Set(employees.map(emp => emp.destination))];
+  }, []);
+
   const filteredEmployees = useMemo(() => {
-    return selectedCompany === "All"
-      ? employees
-      : employees.filter(emp => emp.company === selectedCompany);
-  }, [selectedCompany]);
+    const conditionalCompanies = selectedCompany === "All" ? dropdownCompanies.slice(1) : [selectedCompany];
+    const conditionalDestinations = selectedDestination === "All" ? dropdownDestinations.slice(1) : [selectedDestination];
+
+    return employees.filter(emp => conditionalCompanies.includes(emp.company) && conditionalDestinations.includes(emp.destination));
+  }, [selectedCompany, selectedDestination]);
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
@@ -49,22 +40,41 @@ export default function EmployeeTable({ employees = [] }) {
     setCurrentPage(1);  // Reset to first page when changing company filter
   };
 
+  const handleDestinationChange = (value) => {
+    setSelectedDestination(value);
+    setCurrentPage(1);  // Reset to first page when changing company filter
+  };
+
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Company-wise Employee Info</CardTitle>
-                <Select value={selectedCompany}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Filter by Company" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {companies.map((company) => (
-                            <SelectItem key={company} value={company} onChange={handleCompanyChange}>
-                                {company}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div className="flex gap-3">
+                    <Select value={selectedDestination}>
+                        <SelectTrigger>
+                            <SelectValue placeholder={selectedDestination === "All" ? "Filter by Destination" : selectedDestination} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {dropdownDestinations.map((destination) => (
+                                <SelectItem key={destination} value={destination} onChange={handleDestinationChange}>
+                                    {destination}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={selectedCompany}>
+                        <SelectTrigger>
+                            <SelectValue placeholder={selectedCompany === "All" ? "Filter by Company" : selectedCompany} />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {dropdownCompanies.map((company) => (
+                                <SelectItem key={company} value={company} onChange={handleCompanyChange}>
+                                    {company}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </CardHeader>
             <CardContent>
                 <div className="max-h-[400px] overflow-auto">
@@ -77,6 +87,7 @@ export default function EmployeeTable({ employees = [] }) {
                                 <TableHead>{"Company"}</TableHead>
                                 <TableHead>{"Department"}</TableHead>
                                 <TableHead>{"Transport"}</TableHead>
+                                <TableHead>{"Destination"}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -88,6 +99,7 @@ export default function EmployeeTable({ employees = [] }) {
                                     <TableCell>{item.company}</TableCell>
                                     <TableCell>{item.department}</TableCell>
                                     <TableCell>{item.transport}</TableCell>
+                                    <TableCell>{item.destination}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

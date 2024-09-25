@@ -19,7 +19,7 @@ const TrafficData = ({ trafficPrediction = [], type = "Morning" }) => {
             </CardHeader>
             <CardContent>
             {showTrafficChart ? (
-                <div className="">
+                <div>
                     <LineChart xAxisLabel="Date" yAxisLabel="Vehicles" data={trafficPrediction} xAxisKey="date" lines={Object.keys(trafficPrediction[0]).filter(item => item !== 'date')} />
                 </div>
             ) : (

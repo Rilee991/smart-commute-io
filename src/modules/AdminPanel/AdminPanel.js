@@ -13,6 +13,7 @@ import { startCase } from 'lodash'
 import TrafficData from './TrafficData/TrafficData'
 import EmployeeData from './EmployeeData/EmployeeData'
 import Schedule from './Schedule/Schedule'
+import Penalty from './Penalty/Penalty'
 
 export default function AdminPanel({ employees = [] }) {
     const [activeTab, setActiveTab] = useState('traffic');
@@ -54,48 +55,7 @@ export default function AdminPanel({ employees = [] }) {
           </TabsContent>
   
           <TabsContent value="penalties">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Company A Compliance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={75} className="w-full" />
-                  <p className="mt-2 text-sm text-gray-600">75% of employees followed the schedule</p>
-                  <p className="text-sm text-gray-600">25 employees complied, 8 did not</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Company B Compliance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={90} className="w-full" />
-                  <p className="mt-2 text-sm text-gray-600">90% of employees followed the schedule</p>
-                  <p className="text-sm text-gray-600">45 employees complied, 5 did not</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Company C Compliance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={60} className="w-full" />
-                  <p className="mt-2 text-sm text-gray-600">60% of employees followed the schedule</p>
-                  <p className="text-sm text-gray-600">30 employees complied, 20 did not</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Company D Compliance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Progress value={85} className="w-full" />
-                  <p className="mt-2 text-sm text-gray-600">85% of employees followed the schedule</p>
-                  <p className="text-sm text-gray-600">34 employees complied, 6 did not</p>
-                </CardContent>
-              </Card>
-            </div>
+            <Penalty employees={employees} />
           </TabsContent>
         </Tabs>
       </div>

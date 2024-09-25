@@ -56,12 +56,6 @@ export default function EmployeeTableSlots({ employees = [] }) {
                         <TableHeader className="sticky top-0">
                             <TableRow>
                                 {Object.keys(employees[0] || {}).map(col => <TableHead key={col}>{startCase(col)}</TableHead>)}
-                                {/* <TableHead>{"Emp ID"}</TableHead>
-                                <TableHead>{"Name"}</TableHead>
-                                <TableHead>{"Company"}</TableHead>
-                                <TableHead>{"Department"}</TableHead>
-                                <TableHead>{"Transport"}</TableHead>
-                                <TableHead>{"Morn"}</TableHead> */}
                             </TableRow>
                         </TableHeader>
                         <TableBody>

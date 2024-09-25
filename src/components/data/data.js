@@ -2,6 +2,7 @@ import { generateTrafficData } from "./utils";
 
 export const companies = ["Microsoft", "Google", "Intel"];
 export const departments = ["HR", "Engineeing", "Marketing", "Operations"];
+export const destinations = ["Indiranagar", "HSR", "Whitefield"];
 export const employeesPerCompany = 100;
 export const shuttlePercentage = 0.4;
 export const shuttleEquivalentVehicles = 5;

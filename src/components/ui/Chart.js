@@ -1,3 +1,4 @@
+import { startCase } from 'lodash';
 import React from 'react'
 import { LineChart as RechartsLineChart, BarChart as RechartsBarChart, Label, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LabelList } from 'recharts'
 import ColorPicker from '../data/ColorPicker';
@@ -14,8 +15,8 @@ export const LineChart = ({ data, lines = [], xAxisKey = "", xAxisLabel = "", yA
           <Label value={xAxisLabel} offset={-10} position="bottom" />
         </XAxis>
         <YAxis label={{ value: yAxisLabel, angle: -90, position: 'insideLeft' }}  />
-        <Tooltip />
-        <Legend verticalAlign="top" />
+        <Tooltip itemSorter={(item) => item.value * -1} />
+        <Legend verticalAlign="top" wrapperStyle={{ fontWeight: 600 }} iconType="circle" iconSize={10} />
         {lines && lines.map(line => (
           <Line key={line} type="monotone" dataKey={line} stroke={colorPicker.getNextColor()} strokeWidth="3" />
         ))}
@@ -38,7 +39,9 @@ export const BarChart = ({ data, xAxisKey = "name", bars = [], xAxisLabel = "", 
         <Tooltip />
         <Legend verticalAlign="top" />
         {bars && bars.map(bar => (
-          <Bar key={bar} dataKey={bar} fill={colorPicker.getNextColor()} />
+          <Bar name={startCase(bar)} key={bar} dataKey={bar} fill={colorPicker.getNextColor()}>
+            <LabelList dataKey={bar} position="top" fontWeight={600} />
+          </Bar>
         ))}
       </RechartsBarChart>
     </ResponsiveContainer>
