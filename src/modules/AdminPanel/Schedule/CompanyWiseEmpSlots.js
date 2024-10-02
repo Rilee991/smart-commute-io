@@ -39,7 +39,7 @@ export default function EmployeeTableSlots({ employees = [] }) {
                 <CardTitle>Employee-wise Slot Info</CardTitle>
                 <Select value={selectedCompany}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Filter by Company" />
+                        <SelectValue placeholder={selectedCompany === "All" ? "Filter by Company" : selectedCompany} />
                     </SelectTrigger>
                     <SelectContent>
                         {companies.map((company) => (
